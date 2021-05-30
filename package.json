@@ -1,0 +1,16 @@
+{
+  "name": "meter_backend",
+  "version": "1.0.0",
+  "description": "this is the meter backend",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "clement dunstan",
+  "license": "ISC"
+}
