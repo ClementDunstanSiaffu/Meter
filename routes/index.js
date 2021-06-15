@@ -46,3 +46,47 @@ exports.post_amount = async(req,res)=>{
     await Meter.replaceOne(docs[index],meter)
     res.send("SUCCESS")
 }
+
+exports.calculating_unit = async(req,res)=>{
+    const obj = req.params
+    const meter = await Meter.findOne({passcode:obj.passcode})
+    const docs = await Meter.find((err,docs)=>{return docs})
+    const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
+    if (meter.amount > obj.amount){
+        meter.amount -= obj.amount
+        const unit = parseInt(obj.amount/300)
+        meter.unit = unit
+        let str_unit
+        if (unit >= 100){
+            str_unit = `0${unit}`
+        }else{
+            str_unit = `00${unit}`
+        }
+        if (obj.passcode == 12345){
+            const tokens = helper.arr_for_meterA()
+            const data = {
+                "tokens":tokens + " " + str_unit,
+                "unit":`${unit}`,
+                "status":"okay"
+            }
+            await Meter.replaceOne(docs[index],meter)
+            res.json(data)
+        }else{
+            const tokens = helper.arr_for_meterB()
+            const data = {
+                "tokens":tokens,
+                "unit":`${unit}`,
+                "status":"okay"
+            }
+            await Meter.replaceOne(docs[index],meter)
+            res.json(data)
+        }
+    }else{
+        res.json({
+            "status":"failed"
+        })
+    }
+    
+
+    
+}
