@@ -52,7 +52,7 @@ exports.calculating_unit = async(req,res)=>{
     const meter = await Meter.findOne({passcode:obj.passcode})
     const docs = await Meter.find((err,docs)=>{return docs})
     const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
-    if (meter.amount > parse(obj.amount)){
+    if (meter.amount > parseInt(obj.amount)){
         meter.amount -= obj.amount
         const unit = parseInt(obj.amount/300)
         meter.unit = unit
