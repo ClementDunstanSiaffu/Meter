@@ -32,7 +32,7 @@ exports.post_unit = async(req,res)=>{
     const meter = await Meter.findOne({passcode:obj.passcode})
     const docs = await Meter.find((err,docs)=>{return docs})
     const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
-    meter.unit = obj.unit
+    meter.unit = parseInt(obj.unit)
     await Meter.replaceOne(docs[index],meter)
     res.send("SUCCESS")
 }
@@ -42,7 +42,7 @@ exports.post_amount = async(req,res)=>{
     const meter = await Meter.findOne({passcode:obj.passcode})
     const docs = await Meter.find((err,docs)=>{return docs})
     const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
-    meter.amount = obj.amount
+    meter.amount = parseInt(obj.amount)
     await Meter.replaceOne(docs[index],meter)
     res.send("SUCCESS")
 }
@@ -52,15 +52,20 @@ exports.calculating_unit = async(req,res)=>{
     const meter = await Meter.findOne({passcode:obj.passcode})
     const docs = await Meter.find((err,docs)=>{return docs})
     const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
-    if (meter.amount > obj.amount){
+    if (meter.amount > parse(obj.amount)){
         meter.amount -= obj.amount
         const unit = parseInt(obj.amount/300)
         meter.unit = unit
         let str_unit
-        if (unit >= 100){
+        if (unit >= 100 && unit <= 999){
             str_unit = `0${unit}`
         }else{
-            str_unit = `00${unit}`
+            if (unit >= 1000){
+                str_unit = `${unit}`
+            }else{
+                str_unit = `00${unit}`
+            }
+           
         }
         if (obj.passcode == 12345){
             const tokens = helper.arr_for_meterA()
