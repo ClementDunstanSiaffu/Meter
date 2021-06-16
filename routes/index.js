@@ -63,7 +63,12 @@ exports.calculating_unit = async(req,res)=>{
             if (unit >= 1000){
                 str_unit = `${unit}`
             }else{
-                str_unit = `00${unit}`
+                if (unit >=10 && unit <= 99){
+                    str_unit = `00${unit}`
+                }else{
+                    str_unit = `000${unit}`
+                }
+               
             }
            
         }
@@ -75,7 +80,7 @@ exports.calculating_unit = async(req,res)=>{
                 "status":"okay"
             }
             await Meter.replaceOne(docs[index],meter)
-            res.json(data)
+            res.send(`${data.tokens}`)
         }else{
             const tokens = helper.arr_for_meterB()
             const data = {
@@ -84,12 +89,11 @@ exports.calculating_unit = async(req,res)=>{
                 "status":"okay"
             }
             await Meter.replaceOne(docs[index],meter)
-            res.json(data)
+            res.send(`${data.tokens}`)
         }
     }else{
-        res.json({
-            "status":"failed"
-        })
+        res.send(
+            "failed")
     }
     
 
