@@ -2,8 +2,10 @@ const {helper} = require('../helpers/')
 const mongoose = require('mongoose')
 const Meter = mongoose.model("METER")
 
+let token = null
+
 exports.get_tokens = (req,res)=>{
-    if (req.params == 12345){
+    if (req.params == "A"){
         const tokens = helper.arr_for_meterA()
         res.send(tokens)
     }else{
@@ -14,7 +16,7 @@ exports.get_tokens = (req,res)=>{
 
 exports.get_amount = async (req,res)=>{
     const passcode = req.params
-    if (passcode == 12345 || passcode == 67890){
+    if (passcode == "A" || passcode == "B"){
         const thatMeter = await Meter.findOne(passcode)
         const amount = thatMeter.amount
         res.status(200).json(amount)
@@ -26,7 +28,7 @@ exports.get_amount = async (req,res)=>{
 }
 
 exports.get_unit = async (req,res)=>{
-    if (passcode == 12345 || passcode == 67890){
+    if (passcode == "A" || passcode == "B"){
         const passcode = req.params
         const thatMeter = await Meter.findOne(passcode)
         const unit = thatMeter.unit
@@ -39,7 +41,7 @@ exports.get_unit = async (req,res)=>{
 
 exports.post_unit = async(req,res)=>{
     const obj = req.params
-    if (obj.passcode == 12345 || obj.passcode == 67890){
+    if (obj.passcode == "A" || obj.passcode == "B"){
         const meter = await Meter.findOne({passcode:obj.passcode})
         const docs = await Meter.find((err,docs)=>{return docs})
         const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
@@ -54,7 +56,7 @@ exports.post_unit = async(req,res)=>{
 
 exports.post_amount = async(req,res)=>{
     const obj = req.params
-    if(obj.passcode == 12345 || obj.passcode == 67890){
+    if(obj.passcode == "A" || obj.passcode == "B"){
         const meter = await Meter.findOne({passcode:obj.passcode})
         const docs = await Meter.find((err,docs)=>{return docs})
         const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
@@ -69,7 +71,7 @@ exports.post_amount = async(req,res)=>{
 
 exports.calculating_unit = async(req,res)=>{
     const obj = req.params
-    if (obj.passcode == 12345 || obj.passcode == 67890){
+    if (obj.passcode == "A" || obj.passcode == "B"){
         const meter = await Meter.findOne({passcode:obj.passcode})
         const docs = await Meter.find((err,docs)=>{return docs})
         const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
@@ -101,7 +103,13 @@ exports.calculating_unit = async(req,res)=>{
                     "status":"okay"
                 }
                 await Meter.replaceOne(docs[index],meter)
-                res.json(data)
+                if (data.tokens !== null){
+                    token = data.tokens
+                    data.tokens = null
+                }else{
+                    token = "0"
+                }
+                res.send(token)
             }else{
                 const tokens = helper.arr_for_meterB()
                 const data = {
@@ -110,7 +118,13 @@ exports.calculating_unit = async(req,res)=>{
                     "status":"okay"
                 }
                 await Meter.replaceOne(docs[index],meter)
-                res.json(data)
+                if (data.tokens !== null){
+                    token = data.tokens
+                    data.tokens = null
+                }else{
+                    token = "0"
+                }
+                res.send(token)
             }
         }else{
             res.json({"status":"insufficient balance"})
@@ -118,8 +132,37 @@ exports.calculating_unit = async(req,res)=>{
     }else{
         res.json({"status":"unmatch password"})
     }
- 
-    
-
     
 }
+
+exports.set_threshold = (req,res)=>{
+    const obj = req.params
+    if (obj.passcode == "A"){
+        helper.set_threshold_for_meterA(obj.threshold)
+    }else{
+        if (obj.passcode == "B"){
+            helper.set_threshold_for_meterB(obj.threshold)
+        }else{
+            helper.set_threshold_for_meterB(-1)
+            helper.set_threshold_for_meterA(-1)
+        }
+    }
+}
+
+exports.get_threshold = (req,res)=>{
+    const obj = req.params
+
+    if (obj.passcode == "A"){
+        const threshold = helper.get_threshold_for_meterA()
+        res.send(threshold)
+    }else{
+        if (obj.passcode == "B"){
+            const threshold = helper.get_threshold_for_meterB()
+            res.send(threshold)
+        }else{
+            res.send("0")
+            
+        }
+    }
+}
+

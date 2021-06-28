@@ -11,5 +11,7 @@ app.get("/unit/:passcode",routes.get_unit)
 app.get("/tuma/unit/:passcode/:unit",routes.post_unit)
 app.get("/tuma/amount/:passcode/:amount",routes.post_amount)
 app.get("/tuma/calculating/:amount/:passcode",routes.calculating_unit)
+app.get("/tuma/threshold/:passcode/:threshold",routes.set_threshold)
+app.get("/threshold/:passcode",routes.get_threshold)
 
 app.listen(PORT,()=>console.log("listening to the PORT " + PORT))
