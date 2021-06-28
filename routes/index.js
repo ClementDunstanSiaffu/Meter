@@ -135,34 +135,52 @@ exports.calculating_unit = async(req,res)=>{
     
 }
 
-exports.set_threshold = (req,res)=>{
+exports.set_threshold = async(req,res)=>{
     const obj = req.params
-    if (obj.passcode == "A"){
-        helper.set_threshold_for_meterA(obj.threshold)
+    if(obj.passcode == "A" || obj.passcode == "B"){
+        const meter = await Meter.findOne({passcode:obj.passcode})
+        const docs = await Meter.find((err,docs)=>{return docs})
+        const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
+        meter.threshold = obj.threshold
+        await Meter.replaceOne(docs[index],meter)
+        res.send("SUCCESS")
     }else{
-        if (obj.passcode == "B"){
-            helper.set_threshold_for_meterB(obj.threshold)
-        }else{
-            helper.set_threshold_for_meterB(-1)
-            helper.set_threshold_for_meterA(-1)
-        }
+        res.send("FAILED")
     }
+   
+    // if (obj.passcode == "A"){
+    //     helper.set_threshold_for_meterA(obj.threshold)
+    // }else{
+    //     if (obj.passcode == "B"){
+    //         helper.set_threshold_for_meterB(obj.threshold)
+    //     }else{
+    //         helper.set_threshold_for_meterB(-1)
+    //         helper.set_threshold_for_meterA(-1)
+    //     }
+    // }
 }
 
-exports.get_threshold = (req,res)=>{
+exports.get_threshold = async(req,res)=>{
     const obj = req.params
-
-    if (obj.passcode == "A"){
-        const threshold = helper.get_threshold_for_meterA()
-        res.send(threshold)
+    if(obj.passcode == "A" || obj.passcode == "B"){
+        const meter = await Meter.findOne({passcode:obj.passcode})
+        const threshold = meter.threshold
+        res.send(`${threshold}`)
     }else{
-        if (obj.passcode == "B"){
-            const threshold = helper.get_threshold_for_meterB()
-            res.send(threshold)
-        }else{
-            res.send("0")
-            
-        }
+        res.send("0")
     }
+   
+    // if (obj.passcode == "A"){
+    //     const threshold = helper.get_threshold_for_meterA()
+    //     res.send(`${threshold}`)
+    // }else{
+    //     if (obj.passcode == "B"){
+    //         const threshold = helper.get_threshold_for_meterB()
+    //         res.send(`${threshold}`)
+    //     }else{
+    //         res.send("0")
+            
+    //     }
+    // }
 }
 

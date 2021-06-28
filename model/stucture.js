@@ -9,7 +9,11 @@ const meterSchema = mongoose.Schema({
     },
     unit:{
         type:Number
-    }
+    },
+    threshold:{
+        type:Number
+    },
+
 })
 
 mongoose.model("METER",meterSchema)
