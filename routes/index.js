@@ -109,7 +109,7 @@ exports.calculating_unit = async(req,res)=>{
                 }else{
                     token = "0"
                 }
-                res.send(token)
+                res.json({"tokens":token})
             }else{
                 const tokens = helper.arr_for_meterB()
                 const data = {
@@ -124,7 +124,7 @@ exports.calculating_unit = async(req,res)=>{
                 }else{
                     token = "0"
                 }
-                res.send(token)
+                res.json({"tokens":token})
             }
         }else{
             res.json({"status":"insufficient balance"})
@@ -143,9 +143,9 @@ exports.set_threshold = async(req,res)=>{
         const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
         meter.threshold = obj.threshold
         await Meter.replaceOne(docs[index],meter)
-        res.send("SUCCESS")
+        res.json({"status":"SUCCESS"})
     }else{
-        res.send("FAILED")
+        res.send({"status":"SUCCESS"})
     }
    
     // if (obj.passcode == "A"){
@@ -165,9 +165,9 @@ exports.get_threshold = async(req,res)=>{
     if(obj.passcode == "A" || obj.passcode == "B"){
         const meter = await Meter.findOne({passcode:obj.passcode})
         const threshold = meter.threshold
-        res.send(`${threshold}`)
+        res.json({"tokens":`${threshold}`})
     }else{
-        res.send("0")
+        res.json({"tokens":"0"})
     }
    
     // if (obj.passcode == "A"){
