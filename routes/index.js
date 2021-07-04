@@ -75,60 +75,63 @@ exports.calculating_unit = async(req,res)=>{
         const meter = await Meter.findOne({passcode:obj.passcode})
         const docs = await Meter.find((err,docs)=>{return docs})
         const index = docs.findIndex((docs)=>docs.passcode == obj.passcode)
-        if (meter.amount > parseInt(obj.amount)){
-            meter.amount -= obj.amount
-            const unit = parseInt(obj.amount/300)
-            meter.unit = unit
-            let str_unit
-            if (unit >= 100 && unit <= 999){
-                str_unit = `0${unit}`
-            }else{
-                if (unit >= 1000){
-                    str_unit = `${unit}`
+        if (index !== -1){
+            if (meter.amount > parseInt(obj.amount)){
+                meter.amount -= obj.amount
+                const unit = parseInt(obj.amount/300)
+                meter.unit = unit
+                let str_unit
+                if (unit >= 100 && unit <= 999){
+                    str_unit = `0${unit}`
                 }else{
-                    if (unit >=10 && unit <= 99){
-                        str_unit = `00${unit}`
+                    if (unit >= 1000){
+                        str_unit = `${unit}`
                     }else{
-                        str_unit = `000${unit}`
+                        if (unit >=10 && unit <= 99){
+                            str_unit = `00${unit}`
+                        }else{
+                            str_unit = `000${unit}`
+                        }
+                       
                     }
                    
                 }
-               
-            }
-            if (obj.passcode == 12345){
-                const tokens = helper.arr_for_meterA()
-                const data = {
-                    "tokens":tokens + " " + str_unit,
-                    "unit":`${unit}`,
-                    "status":"okay"
-                }
-                await Meter.replaceOne(docs[index],meter)
-                if (data.tokens !== null){
-                    token = data.tokens
-                    data.tokens = null
+                if (obj.passcode == "A"){
+                    const tokens = helper.arr_for_meterA()
+                    const data = {
+                        "tokens":tokens + " " + str_unit,
+                        "unit":`${unit}`,
+                        "status":"okay"
+                    }
+                    await Meter.replaceOne(docs[index],meter)
+                    if (data.tokens !== null){
+                        token = data.tokens
+                        data.tokens = null
+                    }else{
+                        token = "0"
+                    }
+                    res.json({"tokens":token})
                 }else{
-                    token = "0"
+                    const tokens = helper.arr_for_meterB()
+                    const data = {
+                        "tokens":tokens + " " + str_unit,
+                        "unit":`${unit}`,
+                        "status":"okay"
+                    }
+                    await Meter.replaceOne(docs[index],meter)
+                    if (data.tokens !== null){
+                        token = data.tokens
+                        data.tokens = null
+                    }else{
+                        token = "0"
+                    }
+                    res.json({"tokens":token})
                 }
-                res.json({"tokens":token})
             }else{
-                const tokens = helper.arr_for_meterB()
-                const data = {
-                    "tokens":tokens + " " + str_unit,
-                    "unit":`${unit}`,
-                    "status":"okay"
-                }
-                await Meter.replaceOne(docs[index],meter)
-                if (data.tokens !== null){
-                    token = data.tokens
-                    data.tokens = null
-                }else{
-                    token = "0"
-                }
-                res.json({"tokens":token})
+                res.json({"status":"insufficient balance"})
             }
-        }else{
-            res.json({"status":"insufficient balance"})
         }
+       
     }else{
         res.json({"status":"unmatch password"})
     }
