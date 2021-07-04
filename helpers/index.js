@@ -1,7 +1,5 @@
 
 class Helpers{
-    threshold_for_meterA = -1;
-    threshold_for_meterB = -1;
 
     arr_for_meterA = ()=>{
         const tokens = [
@@ -22,24 +20,6 @@ class Helpers{
         const n = Math.floor(Math.random()*3)
         return tokens[n]
     }
-
-    set_threshold_for_meterA = (val)=>{
-        this.threshold_for_meterA = val;
-    }
-
-    set_threshold_for_meterB = (val)=>{
-        this.threshold_for_meterB = val;
-    }
-
-    get_threshold_for_meterA  = ()=>{
-        return this.threshold_for_meterA
-    }
-
-    get_threshold_for_meterB  = ()=>{
-        return this.threshold_for_meterB
-    }
-
-
 }
 
 const helper = new Helpers()
