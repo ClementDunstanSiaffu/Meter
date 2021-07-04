@@ -71,7 +71,7 @@ exports.post_amount = async(req,res)=>{
     
 }
 
-exports.calculating_unit = async(req,res)=>{
+exports.calculating_unit = (req,res)=>{
     const obj = req.params
     let val = null
     if (obj.passcode == "A" || obj.passcode == "B"){
