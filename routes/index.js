@@ -74,7 +74,6 @@ exports.calculating_unit = async(req,res)=>{
     if (obj.passcode == "A" || obj.passcode == "B"){
         const meter = await Meter.findOne({passcode:obj.passcode})
         const val = unit_setter( obj.passcode,meter.amount,obj.amount)
-        console.log(val,"object created")
         if (val !== false || val !== null || typeof val !== "undefined"){
             if (val.tokens !== null){
                     token = val.tokens
