@@ -86,15 +86,14 @@ exports.calculating_unit = async(req,res)=>{
             replace_docs(meter,obj.passcode,val)
             
         }else{
-            res.json({"status":"insufficient balance"})
+            res.json({"tokens":"insufficient balance"})
         }
     }else{
-        res.json({"status":"unmatch password"})
+        res.json({"tokens":"unmatch password"})
     }
     
     
 }
-
 exports.set_threshold = async(req,res)=>{
     const obj = req.params
     if(obj.passcode == "A" || obj.passcode == "B"){
